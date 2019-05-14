@@ -1,0 +1,15 @@
+{
+  "name": "@sinoui/http",
+  "version": "0.1.0",
+  "description": "使用axios进行数据交互",
+  "license": "MIT",
+  "homepage": "https://sinoui.github.io/sinoui-http",
+  "dependencies": {
+    "axios": "^0.18.0",
+    "gh-pages": "^2.0.1"
+  },
+  "scripts": {
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
+  }
+}
