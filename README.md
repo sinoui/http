@@ -118,7 +118,7 @@ http.post(`url/${id}?jsbm=${jsbm}`).then((response) => {
 ```js
 const id="xxx";
 const data = { list: [] }; // data是一个对象
-const params = {}；// 多个查询条件的对象集合
+const params = {}; // 多个查询条件的对象集合
 
 http.post(`url/${id}`, data,{params})
 .then((response) => {
