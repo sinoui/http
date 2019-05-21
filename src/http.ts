@@ -39,7 +39,6 @@ export interface HttpInterface {
    * @returns {AxiosPromise}
    * @memberof HttpInterface
    */
-  // tslint:disable-next-line:no-any
   post<T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T>;
   /**
    * put，用于更新
@@ -50,7 +49,6 @@ export interface HttpInterface {
    * @returns {AxiosPromise}
    * @memberof HttpInterface
    */
-  // tslint:disable-next-line:no-any
   put<T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T>;
 }
 
@@ -88,8 +86,10 @@ function ceateCallAxiosFn(fnName: keyof AxiosInstance) {
 
 const http: HttpInterface = {} as any;
 
-(['get', 'post', 'delete', 'put'] as (keyof HttpInterface)[]).forEach((fnName) => {
-  http[fnName] = ceateCallAxiosFn(fnName);
-});
+(['get', 'post', 'delete', 'put'] as (keyof HttpInterface)[]).forEach(
+  (fnName) => {
+    http[fnName] = ceateCallAxiosFn(fnName);
+  },
+);
 
 export default http;
