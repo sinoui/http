@@ -88,7 +88,7 @@ function ceateCallAxiosFn(fnName: keyof AxiosInstance) {
 
 const http: HttpInterface = {} as any;
 
-(['get', 'post', 'delete', 'put'] as (keyof HttpInterface)[]).map((fnName) => {
+(['get', 'post', 'delete', 'put'] as (keyof HttpInterface)[]).forEach((fnName) => {
   http[fnName] = ceateCallAxiosFn(fnName);
 });
 
