@@ -4,12 +4,59 @@
   "description": "使用axios进行数据交互",
   "license": "MIT",
   "homepage": "https://sinoui.github.io/sinoui-http",
+  "main": "dist/index.js",
+  "umd:main": "dist/my-ts-lib.umd.production.js",
+  "module": "dist/my-ts-lib.es.production.js",
+  "typings": "dist/index.d.ts",
+  "scripts": {
+    "start": "ts-lib-tools watch",
+    "test": "ts-lib-tools test",
+    "build": "ts-lib-tools build",
+    "format": "ts-lib-tools format",
+    "lint": "ts-lib-tools lint",
+    "prepublishOnly": "ts-lib-tools build"
+  },
+  "prettier": {
+    "printWidth": 80,
+    "useTabs": false,
+    "tabWidth": 2,
+    "semi": true,
+    "singleQuote": true,
+    "trailingComma": "all",
+    "bracketSpacing": true,
+    "jsxBracketSameLine": false,
+    "arrowParens": "always"
+  },
+  "eslintConfig": {
+    "extends": "ts-lib"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "src/*.{ts,tsx}": [
+      "cross-env CI=true ts-lib-tools test",
+      "eslint --fix --color",
+      "git add"
+    ]
+  },
+  "files": [
+    "dist",
+    "assets"
+  ],
   "dependencies": {
+    "@babel/polyfill": "^7.4.4",
+    "@babel/runtime": "^7.4.4",
     "axios": "^0.18.0",
     "gh-pages": "^2.0.1"
   },
-  "scripts": {
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d build"
+  "devDependencies": {
+    "husky": "^2.3.0",
+    "lint-staged": "^8.1.7",
+    "prettier": "^1.17.1",
+    "ts-lib-tools": "^0.1.0",
+    "typescript": "^3.4.5"
   }
 }

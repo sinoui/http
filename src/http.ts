@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import Axios, { AxiosResponse, AxiosRequestConfig } from 'axios';
 
-const methods = ['get', 'post', 'delete', 'put'];
+const methods: (keyof HttpInterface)[] = ['get', 'post', 'delete', 'put'];
 
 export interface HttpInterface {
   /**
@@ -49,21 +50,20 @@ const http: HttpInterface = Axios.create() as HttpInterface;
 
 // 处理响应码
 const transformResponse = (response: AxiosResponse) => {
-  if (response.status < 300 && response.status >= 200) {
+  if (response.status < 400 && response.status >= 200) {
     return response.data;
-  } else {
-    throw response;
   }
+  throw response;
 };
 
 // 错误处理
-const transformError = (error) => {
+const transformError = (error: object) => {
   throw error;
 };
 
 methods.forEach((methodName) => {
-  const fn = http[methodName];
-  http[methodName] = (...args) =>
+  const fn: any = http[methodName];
+  http[methodName] = (...args: any[]) =>
     fn(...args).then(transformResponse, transformError);
 });
 

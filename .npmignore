@@ -16,7 +16,6 @@ tsconfig.tsbuildinfo
 
 # misc
 .DS_Store
-__MACOSX
 .env.local
 .env.development.local
 .env.test.local

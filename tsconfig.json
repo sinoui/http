@@ -1,15 +1,30 @@
 {
+  "include": ["src", "types"],
+  "exclude": ["node_modules"],
   "compilerOptions": {
-    "baseUrl": "./",
-    "rootDirs": ["./src"],
-    "checkJs": false,
-    "skipLibCheck": true,
-    "types": [],
-    "jsx": "react",
-    "allowSyntheticDefaultImports": true,
     "target": "es5",
-    "lib": ["es2015", "dom"]
-  },
-  "include": ["src"],
-  "exclude": ["node_modules"]
+    "module": "esnext",
+    "lib": ["dom", "esnext"],
+    "importHelpers": true,
+    "declaration": true,
+    "sourceMap": true,
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "strictPropertyInitialization": true,
+    "noImplicitThis": true,
+    "alwaysStrict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "moduleResolution": "node",
+    "jsx": "react",
+    "esModuleInterop": true,
+    "allowJs": false,
+    "baseUrl": "./",
+    "rootDir": "./src",
+    "outDir": "./build"
+  }
 }
