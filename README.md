@@ -216,8 +216,8 @@ function uploadFile() {
 ```html
 <html>
   <body>
-    <input id="file" type="file" />
-    <input type="button" value="文件上传" multiple onclick="uploadFiles()" />
+    <input id="file" type="file" multiple />
+    <input type="button" value="文件上传" onclick="uploadFiles()" />
   </body>
 </html>
 ```
@@ -238,6 +238,52 @@ function uploadFiles() {
       'Content-Type': 'multipart/form-data',
     },
   };
+  http
+    .post('url', formData, config)
+    .then((response) => {
+      if (response.status === 200) {
+        console.log('上传成功');
+      }
+    })
+    .catch((error) => console.error('上传失败'));
+}
+```
+
+### 从表单中获取文件数据
+
+`index.html`:
+
+```html
+<html>
+  <body>
+    <form id="userForm">
+      <input type="text" name="userName" placeholder="请输出用户名" />
+      <input
+        type="file"
+        name="userPhotos"
+        multiple
+        placeholder="选择文件图像"
+      />
+      <input type="button" value="文件上传" onclick="uploadFiles()" />
+    </form>
+    <script src="index.js"></script>
+  </body>
+</html>
+```
+
+`index.js`:
+
+```js
+import http from '@sinoui/http';
+
+function uploadFiles() {
+  const formData = new FormData(document.getElementById('userForm'));
+  const config = {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  };
+
   http
     .post('url', formData, config)
     .then((response) => {
