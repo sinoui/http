@@ -1,7 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import Axios, { AxiosResponse, AxiosRequestConfig } from 'axios';
+import Axios, {
+  AxiosInstance,
+  AxiosResponse,
+  AxiosRequestConfig,
+  AxiosError,
+} from 'axios';
+import { EventEmitter } from 'events';
 
-const methods: (keyof HttpInterface)[] = ['get', 'post', 'delete', 'put'];
+const eventbus = new EventEmitter();
+
+const HTTP_RESPONSE = 'response';
 
 export interface HttpInterface {
   /**
@@ -46,10 +54,17 @@ export interface HttpInterface {
   put<T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T>;
 }
 
-const http: HttpInterface = Axios.create() as HttpInterface;
+export function registerInterceptFunction(fn: any) {
+  eventbus.on(HTTP_RESPONSE, fn);
+}
+
+export function cancelInterceptFunction(fn: any) {
+  eventbus.removeListener(HTTP_RESPONSE, fn);
+}
 
 // 处理响应码
 const transformResponse = (response: AxiosResponse) => {
+  eventbus.emit(HTTP_RESPONSE, response);
   if (response.status < 400 && response.status >= 200) {
     return response.data;
   }
@@ -57,14 +72,24 @@ const transformResponse = (response: AxiosResponse) => {
 };
 
 // 错误处理
-const transformError = (error: object) => {
+const transformError = (error: AxiosError) => {
+  eventbus.emit(HTTP_RESPONSE, error.response);
   throw error;
 };
 
-methods.forEach((methodName) => {
-  const fn: any = http[methodName];
-  http[methodName] = (...args: any[]) =>
-    fn(...args).then(transformResponse, transformError);
+function ceateCallAxiosFn(fnName: keyof AxiosInstance) {
+  return (...args: any) => {
+    return (Axios[fnName] as any)(...args).then(
+      transformResponse,
+      transformError,
+    );
+  };
+}
+
+const http: HttpInterface = {} as any;
+
+(['get', 'post', 'delete', 'put'] as (keyof HttpInterface)[]).map((fnName) => {
+  http[fnName] = ceateCallAxiosFn(fnName);
 });
 
 export default http;
