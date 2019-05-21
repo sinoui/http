@@ -168,30 +168,30 @@ http
 
 **谨记：** 在做实际开发时，一定要仔细阅读相关 API 约束，确定需要传递参数的数据结构。
 
-## 附：文件上传示例
+## 上传文件
 
-这里我们给出一个使用ajax方式上传文件的示例：
+### 上传单个文件
 
 `html`文件：
 
 ```html
 <html>
-    <body>
-        <input id="file" type='file'/>
-        <input type="button" value="文件上传" onclick="uploadFile()"/>
-    </body>
+  <body>
+    <input id="file" type="file" />
+    <input type="button" value="文件上传" onclick="uploadFile()" />
+  </body>
 </html>
 ```
 
-对应的js文件：
+对应的 js 文件：
 
 ```js
 import http from '@sinoui/http';
 
 function uploadFile() {
-  const files: File[] = document.getElementById('file').value;
+  const file = document.getElementById('file').files[0];
   const formData = new FormData();
-  formData.append('file', files);
+  formData.append('file', file);
 
   const config = {
     headers: {
@@ -209,3 +209,42 @@ function uploadFile() {
 }
 ```
 
+### 上传多个文件
+
+`html`文件：
+
+```html
+<html>
+  <body>
+    <input id="file" type="file" />
+    <input type="button" value="文件上传" multiple onclick="uploadFiles()" />
+  </body>
+</html>
+```
+
+对应的 js 文件：
+
+```js
+import http from '@sinoui/http';
+
+function uploadFiles() {
+  const files = document.getElementById('file').files;
+  const formData = new FormData();
+
+  files.forEach((file, index) => formData.append(`files[${index}]`, file));
+
+  const config = {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  };
+  http
+    .post('url', formData, config)
+    .then((response) => {
+      if (response.status === 200) {
+        console.log('上传成功');
+      }
+    })
+    .catch((error) => console.error('上传失败'));
+}
+```
