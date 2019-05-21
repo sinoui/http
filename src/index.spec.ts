@@ -1,5 +1,6 @@
-import { sum } from './index';
+import http from './index';
 
-it('1 + 1 = 2', () => {
-  expect(sum(1, 1)).toBe(2);
+it('http.get ha been called', () => {
+  http.get('/123');
+  expect(http.get).toBeCalled();
 });
