@@ -223,6 +223,13 @@ http.interceptors.request.eject(interceptorId);
 
 注意：使用 interceptors 时，需要返回`response`或者`config`。
 
+## @sinoui/http与Axios的区别
+
+`@sinoui/http`只是对于`Axios`的简单轻量级封装，区别如下：
+
+* http简化了响应和状态码的处理。在响应码为`200~400(包含200，不包含400)`，http会直接返回响应数据，而axios则返回整个响应对象`(response)`
+* http只支持单例应用(全局只有一个http对象);而`axios`既支持单例使用，又支持创建对象的方式使用，也就是说，axios可以实现在同一个应用中不同模块使用不同的axios配置、拦截器之类的。
+
 ## 上传文件
 
 ### 上传单个文件
