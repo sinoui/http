@@ -1,8 +1,3 @@
-import http, {
-  registerInterceptFunction,
-  cancelInterceptFunction,
-} from './http';
+import http from './http';
 
 export default http;
-
-export { registerInterceptFunction, cancelInterceptFunction };

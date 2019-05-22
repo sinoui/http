@@ -3,13 +3,8 @@ import Axios, {
   AxiosInstance,
   AxiosResponse,
   AxiosRequestConfig,
-  AxiosError,
+  AxiosInterceptorManager,
 } from 'axios';
-import { EventEmitter } from 'events';
-
-const eventbus = new EventEmitter();
-
-const HTTP_RESPONSE = 'response';
 
 export interface HttpInterface {
   /**
@@ -50,37 +45,27 @@ export interface HttpInterface {
    * @memberof HttpInterface
    */
   put<T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T>;
-}
 
-export function registerInterceptFunction(fn: any) {
-  eventbus.on(HTTP_RESPONSE, fn);
-}
-
-export function cancelInterceptFunction(fn: any) {
-  eventbus.removeListener(HTTP_RESPONSE, fn);
+  /**
+   * 请求、响应拦截器、转换器
+   */
+  interceptors: {
+    request: AxiosInterceptorManager<AxiosRequestConfig>;
+    response: AxiosInterceptorManager<AxiosResponse>;
+  };
 }
 
 // 处理响应码
 const transformResponse = (response: AxiosResponse) => {
-  eventbus.emit(HTTP_RESPONSE, response);
   if (response.status < 400 && response.status >= 200) {
     return response.data;
   }
   throw response;
 };
 
-// 错误处理
-const transformError = (error: AxiosError) => {
-  eventbus.emit(HTTP_RESPONSE, error.response);
-  throw error;
-};
-
 function ceateCallAxiosFn(fnName: keyof AxiosInstance) {
   return (...args: any) => {
-    return (Axios[fnName] as any)(...args).then(
-      transformResponse,
-      transformError,
-    );
+    return (Axios[fnName] as any)(...args).then(transformResponse);
   };
 }
 
@@ -91,5 +76,7 @@ const http: HttpInterface = {} as any;
     http[fnName] = ceateCallAxiosFn(fnName);
   },
 );
+
+http.interceptors = Axios.interceptors;
 
 export default http;

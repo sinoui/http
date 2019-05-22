@@ -168,6 +168,61 @@ http
 
 **谨记：** 在做实际开发时，一定要仔细阅读相关 API 约束，确定需要传递参数的数据结构。
 
+## 拦截器、转换器
+
+http 采用与[Axios Interceptors](https://github.com/axios/axios#interceptors)同样的 API，做请求和响应的拦截与转换。
+
+### 例子：拦截 401
+
+```ts
+import http from '@sinoui/http';
+
+http.interceptors.response.use((response) => {
+  if (response.status === 401) {
+    console.log('需要登录才能访问此接口');
+    // 跳转到登录页
+  }
+
+  return response;
+});
+```
+
+### 例子：统一添加 userToken
+
+```ts
+import http from '@sinoui/http';
+
+http.interceptors.request.use((config) => {
+  if (!config.headers) {
+    config.headers = {};
+  }
+
+  config.headers.userToken = '123';
+
+  return config;
+});
+```
+
+### 取消拦截器
+
+```ts
+import http from '@sinoui/http';
+
+const interceptorId = http.interceptors.request.use((config) => {
+  if (!config.headers) {
+    config.headers = {};
+  }
+
+  config.headers.userToken = '123';
+
+  return config;
+});
+
+http.interceptors.request.eject(interceptorId);
+```
+
+注意：使用 interceptors 时，需要返回`response`或者`config`。
+
 ## 上传文件
 
 ### 上传单个文件
