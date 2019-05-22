@@ -52,12 +52,13 @@
     "axios": "^0.18.0"
   },
   "devDependencies": {
+    "gh-pages": "^2.0.1",
     "husky": "^2.3.0",
     "jest-mock-axios": "^3.0.0",
     "lint-staged": "^8.1.7",
+    "nock": "^10.0.6",
     "prettier": "^1.17.1",
     "ts-lib-tools": "^0.1.0",
-    "gh-pages": "^2.0.1",
     "typescript": "^3.4.5"
   }
 }

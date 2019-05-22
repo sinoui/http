@@ -1,63 +1,55 @@
-/* eslint-disable import/no-unresolved */
-import mockAxios from 'jest-mock-axios';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { AxiosResponse } from 'axios';
+import nock from 'nock';
+import { transformResponse } from './http';
 import http from './index';
 
-afterEach(() => {
-  mockAxios.reset();
-});
-
-it('http的基本方法', () => {
-  ['get', 'put', 'post', 'delete', 'interceptors'].forEach((methodName) =>
-    expect(http).toHaveProperty(methodName),
-  );
-});
-
-it('发送get请求，并获取到响应数据', async () => {
-  const promise = http.get('/test');
-
-  expect(mockAxios.get).toHaveBeenCalled();
-
-  mockAxios.mockResponse({
+it('transform response', () => {
+  const response: AxiosResponse = {
     status: 200,
-    data: '123',
+    data: 'responseData',
+  } as any;
+
+  expect(transformResponse(response)).toBe('responseData');
+});
+
+it('transform error', () => {
+  expect.assertions(1);
+  const response: AxiosResponse = {
+    status: 401,
+    data: 'responseData',
+  } as any;
+
+  try {
+    transformResponse(response);
+  } catch (e) {
+    expect(e).toBe(response);
+  }
+});
+
+describe('interceptors', () => {
+  beforeEach(() => {
+    nock('http://localhost')
+      .get('/test')
+      .reply(200, '"200"');
+
+    nock('http://localhost')
+      .get('/error')
+      .reply(401, '401');
   });
 
-  const result = await promise;
+  it('200', async () => {
+    const response = await http.get('http://localhost/test');
 
-  expect(result).toBe('123');
-});
+    expect(response).toBe('200');
+  });
 
-it('500响应', async () => {
-  expect.assertions(2);
-
-  try {
-    const promise = http.get('/test');
-
-    expect(mockAxios.get).toHaveBeenCalled();
-
-    mockAxios.mockResponse({
-      status: 500,
-      data: 'error stack',
-    });
-
-    await promise;
-  } catch (e) {
-    expect(e.status).toBe(500);
-  }
-});
-
-it('请求发送失败', async () => {
-  expect.assertions(2);
-
-  try {
-    const promise = http.get('/test');
-
-    expect(mockAxios.get).toHaveBeenCalled();
-
-    mockAxios.mockError(new Error('未知错误'));
-
-    await promise;
-  } catch (e) {
-    expect(e).toBeDefined();
-  }
+  it('401', async () => {
+    expect.assertions(1);
+    try {
+      await http.get('http://localhost/error');
+    } catch (e) {
+      expect(e).toBeDefined();
+    }
+  });
 });
