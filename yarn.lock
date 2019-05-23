@@ -5667,10 +5667,10 @@ ts-lib-scripts-utils@^0.1.0:
   dependencies:
     chalk "^2.4.2"
 
-ts-lib-tools@^0.1.5:
-  version "0.1.5"
-  resolved "https://registry.yarnpkg.com/ts-lib-tools/-/ts-lib-tools-0.1.5.tgz#bf0c14465e2032d466e23b56118268ff2bbf6fc9"
-  integrity sha512-TWDF/kEiXJvljneroQb7M02WOEVVudgLfmBagXhhvgV9OadvW89umWW1lIedq5qJ6ZR+RO6nqCBfLW+Ka8nbHA==
+ts-lib-tools@^0.1.6:
+  version "0.1.6"
+  resolved "https://registry.yarnpkg.com/ts-lib-tools/-/ts-lib-tools-0.1.6.tgz#0c64e65af13ce54b78c19fbb9c864eae23d7c6c7"
+  integrity sha512-tNCOpqh7nMMjggK5on3JDTk3bS7oAhuLFf2T5m8rDAf4Pwny4pdQnD5o0Zgy+gOib/slESb4SBDar8St3OwLwQ==
   dependencies:
     "@types/jest" "^24.0.13"
     "@typescript-eslint/eslint-plugin" "^1.9.0"
