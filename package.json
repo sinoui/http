@@ -1,6 +1,6 @@
 {
   "name": "@sinoui/http",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "使用axios进行数据交互",
   "license": "MIT",
   "homepage": "https://sinoui.github.io/sinoui-http",
@@ -58,7 +58,7 @@
     "lint-staged": "^8.1.7",
     "nock": "^10.0.6",
     "prettier": "^1.17.1",
-    "ts-lib-tools": "^0.1.5",
+    "ts-lib-tools": "^0.1.6",
     "typescript": "^3.4.5"
   },
   "publishConfig": {
