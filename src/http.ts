@@ -1,4 +1,4 @@
-import Axios, { AxiosResponse } from 'axios';
+import Axios, { AxiosResponse, AxiosRequestConfig } from 'axios';
 
 const http = Axios.create();
 
@@ -13,3 +13,8 @@ export const transformResponse = (response: AxiosResponse) => {
 http.interceptors.response.use(transformResponse);
 
 export default http;
+
+export {
+  AxiosRequestConfig as HttpRequestConfig,
+  AxiosResponse as HttpResponse,
+};
