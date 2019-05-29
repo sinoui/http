@@ -52,4 +52,15 @@ describe('interceptors', () => {
       expect(e).toBeDefined();
     }
   });
+
+  it('transform response', async () => {
+    const mockTransformResponse = jest.fn();
+    mockTransformResponse.mockReturnValue('201');
+    const response = await http.get('http://localhost/test', {
+      transformResponse: mockTransformResponse,
+    });
+
+    expect(response).toBe('201');
+    expect(mockTransformResponse).toBeCalledWith('"200"', expect.anything());
+  });
 });
