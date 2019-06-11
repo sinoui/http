@@ -178,7 +178,7 @@ http 采用与[Axios Interceptors](https://github.com/axios/axios#interceptors)�
 import http from '@sinoui/http';
 
 http.interceptors.response.use(undefined, (error) => {
-  if (error.response.status === 401) {
+  if (error.response && error.response.status === 401) {
     console.log('需要登录才能访问此接口');
     // 跳转到登录页
   }
