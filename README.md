@@ -177,13 +177,13 @@ http 采用与[Axios Interceptors](https://github.com/axios/axios#interceptors)�
 ```ts
 import http from '@sinoui/http';
 
-http.interceptors.response.use((response) => {
-  if (response.status === 401) {
+http.interceptors.response.use(undefined, (error) => {
+  if (error.response.status === 401) {
     console.log('需要登录才能访问此接口');
     // 跳转到登录页
   }
 
-  return response;
+  throw error;
 });
 ```
 
@@ -223,14 +223,16 @@ http.interceptors.request.eject(interceptorId);
 
 注意：使用 interceptors 时，需要返回`response`或者`config`。
 
-## @sinoui/http与Axios的区别
+## @sinoui/http 与 Axios 的区别
 
 `@sinoui/http`只是对于`Axios`的简单轻量级封装，区别如下：
 
-* http简化了响应和状态码的处理。在响应码为`200~400(包含200，不包含400)`，http会直接返回响应数据，而axios则返回整个响应对象`(response)`
-* http只支持单例应用(全局只有一个http对象);而`axios`既支持单例使用，又支持创建对象的方式使用，也就是说，axios可以实现在同一个应用中不同模块使用不同的axios配置、拦截器之类的。
+- http 简化了响应和状态码的处理。在响应码为`200~400(包含200，不包含400)`，http 会直接返回响应数据，而 axios 则返回整个响应对象`(response)`
+- http 只支持单例应用(全局只有一个 http 对象);而`axios`既支持单例使用，又支持创建对象的方式使用，也就是说，axios 可以实现在同一个应用中不同模块使用不同的 axios 配置、拦截器之类的。
 
 ## 上传文件
+
+建议使用[@sinoui/http-send-file](https://github.com/sinoui/http-send-file)上传文件。
 
 ### 上传单个文件
 

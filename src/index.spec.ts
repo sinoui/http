@@ -63,4 +63,29 @@ describe('interceptors', () => {
     expect(response).toBe('201');
     expect(mockTransformResponse).toBeCalledWith('"200"', expect.anything());
   });
+
+  it('another response interceptor', async () => {
+    const mockResponseInterceptor = jest.fn();
+    mockResponseInterceptor.mockReturnValue('interceptor');
+    http.interceptors.response.use(mockResponseInterceptor);
+
+    const response = await http.get('http://localhost/test');
+
+    expect(response).toBe('interceptor');
+    expect(mockResponseInterceptor).toBeCalledWith('200');
+  });
+
+  it('another response error interceptor', async () => {
+    const mockResponseErrorInterceptor = jest.fn();
+    mockResponseErrorInterceptor.mockReturnValue('error');
+    http.interceptors.response.use(undefined, mockResponseErrorInterceptor);
+
+    const response = await http.get('http://localhost/error');
+
+    expect(response).toBe('error');
+    expect(mockResponseErrorInterceptor).toBeCalled();
+    expect(mockResponseErrorInterceptor.mock.calls[0][0].response.status).toBe(
+      401,
+    );
+  });
 });
