@@ -8,6 +8,13 @@
   "umd:main": "dist/my-ts-lib.umd.production.js",
   "module": "dist/my-ts-lib.es.production.js",
   "typings": "dist/index.d.ts",
+  "bugs": {
+    "url": "https://github.com/sinoui/http/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sinoui/http.git"
+  },
   "scripts": {
     "start": "ts-lib-tools watch",
     "test": "ts-lib-tools test",
