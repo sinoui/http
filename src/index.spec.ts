@@ -67,18 +67,23 @@ describe('interceptors', () => {
   it('another response interceptor', async () => {
     const mockResponseInterceptor = jest.fn();
     mockResponseInterceptor.mockReturnValue('interceptor');
-    http.interceptors.response.use(mockResponseInterceptor);
+    const id = http.interceptors.response.use(mockResponseInterceptor);
 
     const response = await http.get('http://localhost/test');
 
     expect(response).toBe('interceptor');
     expect(mockResponseInterceptor).toBeCalledWith('200');
+
+    http.interceptors.response.eject(id);
   });
 
   it('another response error interceptor', async () => {
     const mockResponseErrorInterceptor = jest.fn();
     mockResponseErrorInterceptor.mockReturnValue('error');
-    http.interceptors.response.use(undefined, mockResponseErrorInterceptor);
+    const id = http.interceptors.response.use(
+      undefined,
+      mockResponseErrorInterceptor,
+    );
 
     const response = await http.get('http://localhost/error');
 
@@ -87,5 +92,23 @@ describe('interceptors', () => {
     expect(mockResponseErrorInterceptor.mock.calls[0][0].response.status).toBe(
       401,
     );
+
+    http.interceptors.response.eject(id);
+  });
+});
+
+describe('onFailure', () => {
+  beforeEach(() => {
+    nock('http://localhost')
+      .get('/error')
+      .reply(401, '401');
+  });
+
+  it('监听响应错误', async () => {
+    const mockResponseErrorInterceptor = jest.fn();
+    mockResponseErrorInterceptor.mockReturnValue('error');
+    const id = http.onFailure(mockResponseErrorInterceptor);
+    await expect(http.get('http://localhost/error')).rejects.toThrow();
+    http.interceptors.response.eject(id);
   });
 });

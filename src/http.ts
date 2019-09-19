@@ -1,4 +1,9 @@
-import Axios, { AxiosResponse, AxiosRequestConfig, AxiosInstance } from 'axios';
+import Axios, {
+  AxiosResponse,
+  AxiosRequestConfig,
+  AxiosInstance,
+  AxiosError,
+} from 'axios';
 
 export interface HttpInterface extends AxiosInstance {
   /**
@@ -29,6 +34,13 @@ export interface HttpInterface extends AxiosInstance {
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   put: <T>(url: string, data?: any, config?: AxiosRequestConfig) => Promise<T>;
+
+  /**
+   * 添加响应失败的监听
+   *
+   * @param callback 处理响应失败的回调函数
+   */
+  onFailure(callback: (error: AxiosError) => void): number;
 }
 
 const http = Axios.create() as HttpInterface;
@@ -42,6 +54,13 @@ export const transformResponse = (response: AxiosResponse) => {
 };
 
 http.interceptors.response.use(transformResponse);
+
+http.onFailure = (callback: (error: AxiosError) => void) => {
+  return http.interceptors.response.use(undefined, (error) => {
+    callback(error);
+    throw error;
+  });
+};
 
 export default http;
 
