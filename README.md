@@ -32,10 +32,14 @@
   get 请求形成的 url 一般为`http://url?userId=123&userName=zhang`，传递参数时一般是如下方式：
 
   ```js
-  http
-    .get(url, { params: { userId, userName } })
-    .then((response) => console.log(response))
-    .catch((error) => console.error(error));
+  async function get() {
+    try {
+      const result = await http.get(url, { params: { userId, userName } });
+      console.log(result);
+    } catch (error) {
+      console.error(error);
+    }
+  }
   ```
 
 - POST
@@ -45,12 +49,16 @@
   post 请求一般会携带一些**请求体**内容，如果需要通过 post 发送内容给服务端，一般采用 json 格式。如下：
 
   ```js
-  const data = { list: [] }; // data是一个对象
-  // data会在给服务器发送http请求时，自动编码为json字符串，传递给后端
-  http
-    .post(url, data)
-    .then((response) => console.log(response))
-    .catch((error) => console.error(error));
+  async function post() {
+    const data = { userName: 'John' }; // data是一个对象
+    // data会在给服务器发送http请求时，自动编码为json字符串，传递给后端
+    try {
+      const result = await http.post(url, data);
+      console.log(result);
+    } catch (error) {
+      console.error(errro);
+    }
+  }
   ```
 
 - PUT
@@ -58,13 +66,17 @@
   put 一般用于更新数据时使用。put 方法的请求体规则与 post 类似。
 
   ```js
-  const id = 'xxxx';
-  const data = { list: [] }; // data是一个对象
-  // data会在给服务器发送http请求时，自动编码为json字符串，传递给后端
-  http
-    .put(`url/${id}`, data)
-    .then((response) => console.log(response))
-    .catch((error) => console.error(error));
+  async function put() {
+    const id = 'xxxx';
+    const data = { id: 'xxxx', userName: 'John' }; // data是一个对象
+    try {
+      // data会在给服务器发送http请求时，自动编码为json字符串，传递给后端
+      const result = await http.put(`url/${id}`, data);
+      console.log(result);
+    } catch (error) {
+      console.error(error);
+    }
+  }
   ```
 
 - DELETE
@@ -72,10 +84,14 @@
   delete 一般用于资源删除。delete 一般不允许携带任何请求内容。
 
   ```js
-  http
-    .delete(`url/${id}`)
-    .then((response) => console.log(response))
-    .catch((error) => console.error(error));
+  async function remove() {
+    try {
+      const result = await http.delete(`url/${id}`);
+      console.log(result);
+    } catch (error) {
+      console.error(error);
+    }
+  }
   ```
 
 ## http 数据传递
@@ -177,15 +193,15 @@ http 采用与[Axios Interceptors](https://github.com/axios/axios#interceptors)�
 ```ts
 import http from '@sinoui/http';
 
-http.interceptors.response.use(undefined, (error) => {
+http.onFailure((error) => {
   if (error.response && error.response.status === 401) {
     console.log('需要登录才能访问此接口');
     // 跳转到登录页
   }
-
-  throw error;
 });
 ```
+
+与 React 项目的结合请参见 [在 React 项目中添加 401 拦截器](#在-react-项目中添加-401-拦截器)。
 
 ### 例子：统一添加 userToken
 
@@ -200,6 +216,34 @@ http.interceptors.request.use((config) => {
   config.headers.userToken = '123';
 
   return config;
+});
+```
+
+### `onFailure` vs `interceptors`
+
+我们可以通过 `http.onFailure(failureCallback)` 或者 `http.interceptors.response.use(undefined, failureCallback)` 添加 http 响应失败的回调函数。但是有细微差别。
+
+`onFailure` 用来监听响应失败，但不能将失败的响应转换成正确的响应，非常适合做安全拦截这种场景。但是 `interceptors` 则可以将失败的响应转换成正确的响应，例如从缓存中拿数据。
+
+`onFailure` 内部使用的是 `interceptors`，所以`onFailure` 可以转化为 `interceptors`：
+
+```ts
+import http from '@sinoui/http';
+
+http.onFailure((error) => {
+  console.log('http出错');
+});
+```
+
+相当于：
+
+```ts
+import http from '@sinoui/http';
+
+http.interceptors.response.use(undefined, (error) => {
+  console.log('http出错');
+
+  throw error; // ⚠ 这里必须抛出 error，要不然 axios 会将失败响应当成成功响应处理
 });
 ```
 
@@ -223,6 +267,18 @@ http.interceptors.request.eject(interceptorId);
 
 注意：使用 interceptors 时，需要返回`response`或者`config`。
 
+### 取消 `onFailure`
+
+```ts
+import http from '@sinoui/http';
+
+const interceptorId = http.onFailure((error) => {
+  console.log('http出错');
+});
+
+http.interceptors.response.eject(interceptorId);
+```
+
 ## @sinoui/http 与 Axios 的区别
 
 `@sinoui/http`只是对于`Axios`的简单轻量级封装，区别如下：
@@ -232,7 +288,9 @@ http.interceptors.request.eject(interceptorId);
 
 ## 上传文件
 
-建议使用[@sinoui/http-send-file](https://github.com/sinoui/http-send-file)上传文件。
+建议使用 [@sinoui/http-send-file](https://github.com/sinoui/http-send-file) 上传文件。
+
+建议使用 [send-big-file](https://github.com/sinouiincubator/send-big-file) 分片上传大文件。
 
 ### 上传单个文件
 
@@ -252,7 +310,7 @@ http.interceptors.request.eject(interceptorId);
 ```js
 import http from '@sinoui/http';
 
-function uploadFile() {
+async function uploadFile() {
   const file = document.getElementById('file').files[0];
   const formData = new FormData();
   formData.append('file', file);
@@ -262,14 +320,13 @@ function uploadFile() {
       'Content-Type': 'multipart/form-data',
     },
   };
-  http
-    .post('url', formData, config)
-    .then((response) => {
-      if (response.status === 200) {
-        console.log('上传成功');
-      }
-    })
-    .catch((error) => console.error('上传失败'));
+
+  try {
+    await http.post('url', formData, config);
+    console.log('上传成功');
+  } catch (error) {
+    console.error('上传失败');
+  }
 }
 ```
 
@@ -291,7 +348,7 @@ function uploadFile() {
 ```js
 import http from '@sinoui/http';
 
-function uploadFiles() {
+async function uploadFiles() {
   const files = document.getElementById('file').files;
   const formData = new FormData();
 
@@ -302,14 +359,13 @@ function uploadFiles() {
       'Content-Type': 'multipart/form-data',
     },
   };
-  http
-    .post('url', formData, config)
-    .then((response) => {
-      if (response.status === 200) {
-        console.log('上传成功');
-      }
-    })
-    .catch((error) => console.error('上传失败'));
+
+  try {
+    await http.post('url', formData, config);
+    console.log('上传成功');
+  } catch (error) {
+    console.error('上传失败');
+  }
 }
 ```
 
@@ -340,7 +396,7 @@ function uploadFiles() {
 ```js
 import http from '@sinoui/http';
 
-function uploadFiles() {
+async function uploadFiles() {
   const formData = new FormData(document.getElementById('userForm'));
   const config = {
     headers: {
@@ -348,13 +404,63 @@ function uploadFiles() {
     },
   };
 
-  http
-    .post('url', formData, config)
-    .then((response) => {
-      if (response.status === 200) {
-        console.log('上传成功');
+  try {
+    await http.post('url', formData, config);
+    console.log('上传成功');
+  } catch (error) {
+    console.error('上传失败');
+  }
+}
+```
+
+## 在 React 项目中添加 401 拦截器
+
+我们需要在 React 项目靠近顶层的地方添加 401 拦截器，确保在发出任何 http 请求之前就设置了 401 拦截器。假设项目采用 [react-router](https://github.com/ReactTraining/react-router) 做路由管理，且 401 时跳转到登录页。
+
+首先定义一个 `AuthInterceptor` 组件：
+
+```ts
+import React, { useEffect } from 'react';
+import http from '@sinoui/http';
+import { withRouter } from 'react-router';
+import { History } from 'history';=
+
+const AuthInterceptor: React.SFC<{ history: History }> = ({ history }) => {
+  useEffect(() => {
+    const interceptorId = http.onFailure((error) => {
+      if (error.response && error.response.status === 401) {
+        history.push('/login'); // 跳转到登录页
       }
-    })
-    .catch((error) => console.error('上传失败'));
+    });
+    return () => http.interceptors.response.eject(interceptorId);
+  }, [history]);
+
+  return null;
+};
+
+export default withRouter(AuthInterceptor);
+```
+
+在 `App` 组件中使用：
+
+```tsx
+import React from 'react';
+import { BrowserRouter } from 'react-router-dom';
+import { Route, Switch } from 'react-router';
+import AuthInterceptor from './components/AuthInterceptor';
+import Login from './pages/Login';
+import AdminPage from './pages/AdminPage';
+
+function App() {
+  return (
+    <div className="app">
+      <BrowserRouter>
+        // 一定要在 Router 组件之中使用。因为 AuthInterceptor 使用了 withRouter
+        <AuthInterceptor />
+        <Router path="/login" component={Login} />
+        <Router path="/admin" component={AdminPage} />
+      </BrowserRouter>
+    </div>
+  );
 }
 ```
