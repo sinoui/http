@@ -1,12 +1,11 @@
 {
   "name": "@sinoui/http",
-  "version": "0.2.2",
+  "version": "1.0.0",
   "description": "使用axios进行数据交互",
   "license": "MIT",
   "homepage": "https://sinoui.github.io/sinoui-http",
   "main": "dist/index.js",
-  "umd:main": "dist/my-ts-lib.umd.production.js",
-  "module": "dist/my-ts-lib.es.production.js",
+  "module": "dist/sinoui-http.esm.js",
   "typings": "dist/index.d.ts",
   "bugs": {
     "url": "https://github.com/sinoui/http/issues"
