@@ -415,6 +415,8 @@ async function uploadFiles() {
 
 ## 在 React 项目中添加 401 拦截器
 
+401 响应代表 “用户没有有效身份信息”，我们可以监听 401 响应，并跳转到登录页。
+
 我们需要在 React 项目靠近顶层的地方添加 401 拦截器，确保在发出任何 http 请求之前就设置了 401 拦截器。假设项目采用 [react-router](https://github.com/ReactTraining/react-router) 做路由管理，且 401 时跳转到登录页。
 
 首先定义一个 `AuthInterceptor` 组件：
