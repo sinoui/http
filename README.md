@@ -477,3 +477,30 @@ function App() {
   );
 }
 ```
+
+## 下载二进制数据
+
+默认情况下，@sinoui/http 会将响应数据当成 JSON 数据处理。但是可以通过 `responseType` 属性指定响应数据的类型，如下所示，下载图片数据：
+
+```ts
+import http from '@sinoui/http';
+
+const imageData = await http.get<Blob>('/image/1.png', {
+  responseType: 'blob',
+});
+
+// 将二进制数据生成对象链接
+const imageSrc = URL.createObjectURL(imageData);
+
+// 将生成的图片url指定给图片元素
+<img src={imageSrc} />;
+```
+
+`responseType` 有如下选项：
+
+- `json` - 将响应数据当成 JSON 解析。这是默认的选项。
+- `text` - 将响应数据当成纯文本解析。
+- `blob` - 将响应数据当成二进制数据处理，并包装成 Blob 对象。只能在浏览器端使用。
+- `arraybuffer` - 将响应数据当成二进制数据处理，并包装成 ArrayBuffer 对象。
+- `document` - 将响应数据当成 DOM 元素解析。
+- `stream` - 将响应数据当成二进制数据处理，并包装成 Node.js 的 stream 对象。
