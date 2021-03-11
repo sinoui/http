@@ -41,12 +41,29 @@ export interface HttpInterface extends AxiosInstance {
    * @param callback 处理响应失败的回调函数
    */
   onFailure(callback: (error: AxiosError) => void): number;
+  /**
+   * 添加response拦截
+   *
+   * @memberof HttpInterface
+   */
+  onResponse: (callback: ResponseCallback) => () => ResponseCallback[];
 }
+
+type ResponseCallback = (res: AxiosResponse) => number;
 
 const http = Axios.create() as HttpInterface;
 
+// 声明定义的reponse拦截器方法集合
+const responseCallbacks: ResponseCallback[] = [];
+
+http.onResponse = (callback: ResponseCallback) => {
+  responseCallbacks.push(callback);
+  return () => responseCallbacks.filter((fn) => fn !== callback);
+};
+
 // 处理响应码
 export const transformResponse = (response: AxiosResponse) => {
+  responseCallbacks.forEach((fn) => fn(response));
   if (response.status < 400 && response.status >= 200) {
     return response.data;
   }
