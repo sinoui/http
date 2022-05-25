@@ -1,6 +1,6 @@
 {
   "name": "@sinoui/http",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "使用axios进行数据交互",
   "license": "MIT",
   "homepage": "https://sinoui.github.io/http",
