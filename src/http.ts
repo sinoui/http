@@ -1,9 +1,11 @@
+/* eslint-disable no-param-reassign */
 import Axios, {
   AxiosResponse,
   AxiosRequestConfig,
   AxiosInstance,
   AxiosError,
 } from 'axios';
+import qs from 'qs';
 
 export interface HttpInterface extends AxiosInstance {
   /**
@@ -71,6 +73,20 @@ export const transformResponse = (response: AxiosResponse) => {
 };
 
 http.interceptors.response.use(transformResponse);
+
+/**
+ * request拦截器，添加params编译方法
+ * @param config
+ * @returns
+ */
+export const transformRequestParams = (config: AxiosRequestConfig) => {
+  if (!config.paramsSerializer) {
+    config.paramsSerializer = qs.stringify;
+  }
+  return config;
+};
+
+http.interceptors.request.use(transformRequestParams);
 
 http.onFailure = (callback: (error: AxiosError) => void) => {
   return http.interceptors.response.use(undefined, (error) => {
